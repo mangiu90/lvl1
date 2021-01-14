@@ -25,36 +25,23 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (x, y)
 
     def update(self, pressed_keys):
-        if self.idleCount == 10:
-            self.idleCount = 0
-        self.surf = self.idle_img[self.idleCount].convert_alpha()
-        self.surf = pygame.transform.scale(self.surf, (100, 100))
-        if self.left:
-            self.surf = pygame.transform.flip(self.surf, True, False)
-        self.idleCount += 1
+        self.animacionIdle(self.idle_img)
 
         if pressed_keys[K_UP]:
+            self.animacionWalk(self.run_img)
             self.rect.move_ip(0, -self.vel)
         if pressed_keys[K_DOWN]:
+            self.animacionWalk(self.run_img)
             self.rect.move_ip(0, self.vel)
         if pressed_keys[K_LEFT]:
             self.right = False
             self.left = True
-            if self.walkCount == 8:
-                self.walkCount = 0
-            self.surf = self.run_img[self.walkCount].convert_alpha()
-            self.surf = pygame.transform.scale(self.surf, (100, 100))
-            self.surf = pygame.transform.flip(self.surf, True, False)
-            self.walkCount += 1
+            self.animacionWalk(self.run_img)
             self.rect.move_ip(-self.vel, 0)
         if pressed_keys[K_RIGHT]:
             self.left = False
             self.right = True
-            if self.walkCount == 8:
-                self.walkCount = 0
-            self.surf = self.run_img[self.walkCount].convert_alpha()
-            self.surf = pygame.transform.scale(self.surf, (100, 100))
-            self.walkCount += 1
+            self.animacionWalk(self.run_img)
             self.rect.move_ip(self.vel, 0)
                 
         if self.rect.left < 0:
@@ -63,5 +50,24 @@ class Player(pygame.sprite.Sprite):
             self.rect.right = SCREEN_WIDTH
         if self.rect.top <= 200:
             self.rect.top = 200
-        if self.rect.bottom >= 600:
-            self.rect.bottom = 600
+        if self.rect.bottom >= 635:
+            self.rect.bottom = 635
+
+    def animacionIdle(self, img_list):
+        if self.idleCount >= len(img_list):
+            self.idleCount = 0
+        self.surf = img_list[int(self.idleCount)].convert_alpha()
+        self.surf = pygame.transform.scale(self.surf, (100, 100))
+        if self.left:
+            self.surf = pygame.transform.flip(self.surf, True, False)
+        self.idleCount += 0.1
+
+    def animacionWalk(self, img_list):
+        if self.walkCount >= len(img_list):
+            self.walkCount = 0
+        self.surf = img_list[int(self.walkCount)].convert_alpha()
+        self.surf = pygame.transform.scale(self.surf, (100, 100))
+        if self.left:
+            self.surf = pygame.transform.flip(self.surf, True, False)
+        self.walkCount += 0.1
+        
