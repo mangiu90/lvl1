@@ -116,4 +116,31 @@ class Player(pygame.sprite.Sprite):
         if self.left:
             self.surf = pygame.transform.flip(self.surf, True, False) 
         self.meleeCount += 1
-        print(self.meleeCount)
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Coin, self).__init__()
+        
+        self.x = random.randint(100, 1000)
+        self.y = random.randint(100, 600)
+        self.coin_img = []
+        self.coin_time = 100
+        self.coinCount = 0
+        self.coin_img = [pygame.image.load("data/resources/img/coins/Gold_1.png"), pygame.image.load("data/resources/img/coins/Gold_2.png"), pygame.image.load("data/resources/img/coins/Gold_3.png"), pygame.image.load("data/resources/img/coins/Gold_4.png"), pygame.image.load("data/resources/img/coins/Gold_5.png"), pygame.image.load("data/resources/img/coins/Gold_6.png"), pygame.image.load("data/resources/img/coins/Gold_7.png"), pygame.image.load("data/resources/img/coins/Gold_8.png"), pygame.image.load("data/resources/img/coins/Gold_9.png"), pygame.image.load("data/resources/img/coins/Gold_10.png")]
+        self.surf = self.coin_img[0].convert_alpha()
+        self.surf = pygame.transform.scale(self.surf, [self.surf.get_size()[0]//10, self.surf.get_size()[1]//10])
+        self.rect = self.surf.get_rect()
+        self.rect.center = (self.x, self.y)
+
+    def update(self, dt):
+        if self.coin_time <= 0:
+            if self.coinCount >= 10:
+                self.coinCount = 0
+            self.surf = self.coin_img[self.coinCount].convert_alpha()
+            self.surf = pygame.transform.scale(self.surf, [self.surf.get_size()[0]//10, self.surf.get_size()[1]//10])
+            self.rect = self.surf.get_rect()
+            self.rect.center = (self.x, self.y)
+            self.coinCount += 1
+            self.coin_time = 100
+        self.coin_time -= dt
+        

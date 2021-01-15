@@ -4,6 +4,7 @@ def run_game(width, height, fps, starting_scene):
     pygame.init()
     screen = pygame.display.set_mode((width, height))
     clock = pygame.time.Clock()
+    dt = 0
 
     active_scene = starting_scene
 
@@ -30,10 +31,10 @@ def run_game(width, height, fps, starting_scene):
                 filtered_events.append(event)
         
         active_scene.ProcessInput(filtered_events, pressed_keys)
-        active_scene.Update()
-        active_scene.Render(screen)
+        active_scene.Update(dt)
+        active_scene.Render(screen, dt)
         
         active_scene = active_scene.next
         
         pygame.display.flip()
-        clock.tick(fps)
+        dt = clock.tick(fps)

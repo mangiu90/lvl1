@@ -14,10 +14,10 @@ class StartScene(SceneBase):
             if (event.type == KEYDOWN and event.key == K_RETURN) or event.type == pygame.MOUSEBUTTONDOWN:
                 self.SwitchToScene(Level1Scene())
     
-    def Update(self):
+    def Update(self, dt):
         pass
     
-    def Render(self, screen):
+    def Render(self, screen, dt):
         screen.fill((0, 0, 0))
         bg_start = pygame.image.load("data/resources/img/start.png").convert()
         bg_start.set_colorkey((255, 255, 255), RLEACCEL)
