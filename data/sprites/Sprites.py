@@ -18,6 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.melee = False
         self.meleeCount = 0
 
+        self.jump_sound = pygame.mixer.Sound("data/resources/sound/mixkit-quick-jump-arcade-game-239.wav")
+
         self.idle_img = [pygame.image.load("data/resources/img/player/Idle (1).png"), pygame.image.load("data/resources/img/player/Idle (2).png"), pygame.image.load("data/resources/img/player/Idle (3).png"), pygame.image.load("data/resources/img/player/Idle (4).png"), pygame.image.load("data/resources/img/player/Idle (5).png"), pygame.image.load("data/resources/img/player/Idle (6).png"), pygame.image.load("data/resources/img/player/Idle (7).png"), pygame.image.load("data/resources/img/player/Idle (8).png"), pygame.image.load("data/resources/img/player/Idle (9).png"), pygame.image.load("data/resources/img/player/Idle (10).png")]
         self.jump_img = [pygame.image.load("data/resources/img/player/Jump (1).png"), pygame.image.load("data/resources/img/player/Jump (2).png"), pygame.image.load("data/resources/img/player/Jump (3).png"), pygame.image.load("data/resources/img/player/Jump (4).png"), pygame.image.load("data/resources/img/player/Jump (5).png"), pygame.image.load("data/resources/img/player/Jump (6).png"), pygame.image.load("data/resources/img/player/Jump (7).png"), pygame.image.load("data/resources/img/player/Jump (8).png"), pygame.image.load("data/resources/img/player/Jump (9).png"), pygame.image.load("data/resources/img/player/Jump (10).png")]
         self.run_img = [pygame.image.load("data/resources/img/player/Run (1).png"), pygame.image.load("data/resources/img/player/Run (2).png"), pygame.image.load("data/resources/img/player/Run (3).png"), pygame.image.load("data/resources/img/player/Run (4).png"), pygame.image.load("data/resources/img/player/Run (5).png"), pygame.image.load("data/resources/img/player/Run (6).png"), pygame.image.load("data/resources/img/player/Run (7).png"), pygame.image.load("data/resources/img/player/Run (8).png")]
@@ -50,6 +52,7 @@ class Player(pygame.sprite.Sprite):
                 self.animacionWalk(self.run_img)
                 self.rect.move_ip(self.vel, 0)
             if pressed_keys[K_SPACE]:
+                self.jump_sound.play()
                 self.isJump = True
             if pressed_keys[K_LCTRL]:
                 self.animavionMelee(self.melee_img)
@@ -124,7 +127,6 @@ class Coin(pygame.sprite.Sprite):
         self.x = random.randint(100, 1000)
         self.y = random.randint(100, 600)
         self.coin_img = []
-        self.coin_time = 100
         self.coinCount = 0
         self.coin_img = [pygame.image.load("data/resources/img/coins/Gold_1.png"), pygame.image.load("data/resources/img/coins/Gold_2.png"), pygame.image.load("data/resources/img/coins/Gold_3.png"), pygame.image.load("data/resources/img/coins/Gold_4.png"), pygame.image.load("data/resources/img/coins/Gold_5.png"), pygame.image.load("data/resources/img/coins/Gold_6.png"), pygame.image.load("data/resources/img/coins/Gold_7.png"), pygame.image.load("data/resources/img/coins/Gold_8.png"), pygame.image.load("data/resources/img/coins/Gold_9.png"), pygame.image.load("data/resources/img/coins/Gold_10.png")]
         self.surf = self.coin_img[0].convert_alpha()
@@ -133,14 +135,11 @@ class Coin(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
 
     def update(self, dt):
-        if self.coin_time <= 0:
-            if self.coinCount >= 10:
-                self.coinCount = 0
-            self.surf = self.coin_img[self.coinCount].convert_alpha()
-            self.surf = pygame.transform.scale(self.surf, [self.surf.get_size()[0]//10, self.surf.get_size()[1]//10])
-            self.rect = self.surf.get_rect()
-            self.rect.center = (self.x, self.y)
-            self.coinCount += 1
-            self.coin_time = 100
-        self.coin_time -= dt
+        if self.coinCount >= 30:
+            self.coinCount = 0
+        self.surf = self.coin_img[self.coinCount//3].convert_alpha()
+        self.surf = pygame.transform.scale(self.surf, [self.surf.get_size()[0]//10, self.surf.get_size()[1]//10])
+        self.rect = self.surf.get_rect()
+        self.rect.center = (self.x, self.y)
+        self.coinCount += 1
         
