@@ -8,6 +8,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super(Player, self).__init__()
         self.vel = 5
+        self.pos = (x, y)
         self.isJump = False
         self.left = False
         self.right = False
@@ -20,16 +21,35 @@ class Player(pygame.sprite.Sprite):
 
         self.jump_sound = pygame.mixer.Sound("data/resources/sound/mixkit-quick-jump-arcade-game-239.wav")
 
-        self.idle_img = [pygame.image.load("data/resources/img/player/Idle (1).png"), pygame.image.load("data/resources/img/player/Idle (2).png"), pygame.image.load("data/resources/img/player/Idle (3).png"), pygame.image.load("data/resources/img/player/Idle (4).png"), pygame.image.load("data/resources/img/player/Idle (5).png"), pygame.image.load("data/resources/img/player/Idle (6).png"), pygame.image.load("data/resources/img/player/Idle (7).png"), pygame.image.load("data/resources/img/player/Idle (8).png"), pygame.image.load("data/resources/img/player/Idle (9).png"), pygame.image.load("data/resources/img/player/Idle (10).png")]
-        self.jump_img = [pygame.image.load("data/resources/img/player/Jump (1).png"), pygame.image.load("data/resources/img/player/Jump (2).png"), pygame.image.load("data/resources/img/player/Jump (3).png"), pygame.image.load("data/resources/img/player/Jump (4).png"), pygame.image.load("data/resources/img/player/Jump (5).png"), pygame.image.load("data/resources/img/player/Jump (6).png"), pygame.image.load("data/resources/img/player/Jump (7).png"), pygame.image.load("data/resources/img/player/Jump (8).png"), pygame.image.load("data/resources/img/player/Jump (9).png"), pygame.image.load("data/resources/img/player/Jump (10).png")]
-        self.run_img = [pygame.image.load("data/resources/img/player/Run (1).png"), pygame.image.load("data/resources/img/player/Run (2).png"), pygame.image.load("data/resources/img/player/Run (3).png"), pygame.image.load("data/resources/img/player/Run (4).png"), pygame.image.load("data/resources/img/player/Run (5).png"), pygame.image.load("data/resources/img/player/Run (6).png"), pygame.image.load("data/resources/img/player/Run (7).png"), pygame.image.load("data/resources/img/player/Run (8).png")]
-        self.melee_img = [pygame.image.load("data/resources/img/player/Melee (1).png"), pygame.image.load("data/resources/img/player/Melee (2).png"), pygame.image.load("data/resources/img/player/Melee (3).png"), pygame.image.load("data/resources/img/player/Melee (4).png"), pygame.image.load("data/resources/img/player/Melee (5).png"), pygame.image.load("data/resources/img/player/Melee (6).png"), pygame.image.load("data/resources/img/player/Melee (7).png"), pygame.image.load("data/resources/img/player/Melee (8).png")]
+        self.idle_img = []
+        self.jump_img = []
+        self.run_img = []
+        self.melee_img = []
+        self.dead_img = []
+        self.jump_melee_img = []
+        self.jump_shoot_img = []
+        self.run_shoot_img = []
+        self.shoot_img = []
+        self.slide_img = []
+        for x in range(10):
+            self.idle_img.append(pygame.image.load(f"data/resources/img/player/Idle ({x+1}).png"))
+            self.jump_img.append(pygame.image.load(f"data/resources/img/player/Jump ({x+1}).png"))
+            self.dead_img.append(pygame.image.load(f"data/resources/img/player/Dead ({x+1}).png"))
+            self.slide_img.append(pygame.image.load(f"data/resources/img/player/Slide ({x+1}).png"))
+        for x in range(8):
+            self.run_img.append(pygame.image.load(f"data/resources/img/player/Run ({x+1}).png"))
+            self.melee_img.append(pygame.image.load(f"data/resources/img/player/Melee ({x+1}).png"))
+            self.jump_melee_img.append(pygame.image.load(f"data/resources/img/player/JumpMelee ({x+1}).png"))
+            self.run_shoot_img.append(pygame.image.load(f"data/resources/img/player/RunShoot ({x+1}).png"))
+        for x in range(5):
+            self.jump_shoot_img.append(pygame.image.load(f"data/resources/img/player/JumpShoot ({x+1}).png"))
+        for x in range(4):
+            self.shoot_img.append(pygame.image.load(f"data/resources/img/player/Shoot ({x+1}).png"))
 
         self.surf = self.idle_img[0].convert_alpha()
         self.surf = pygame.transform.scale(self.surf, (100, 100))
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-        self.rect = self.surf.get_rect()
-        self.rect.center = (x, y)
+        self.rect = self.surf.get_rect(center=self.pos)
 
     def update(self, pressed_keys):
         self.animacionIdle(self.idle_img)
@@ -69,7 +89,7 @@ class Player(pygame.sprite.Sprite):
             if self.jumpCount >= -10:
                 self.rect.move_ip(0, (self.jumpCount * abs(self.jumpCount)) * -0.5)
                 self.jumpCount -= 1
-                self.jumpCountAni += 1
+                
             else: 
                 self.jumpCount = 10
                 self.isJump = False
@@ -86,30 +106,31 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = 635
 
     def animacionIdle(self, img_list):
-        if self.idleCount >= len(img_list):
+        if self.idleCount >= len(img_list)*3:
             self.idleCount = 0
-        self.surf = img_list[int(self.idleCount)].convert_alpha()
+        self.surf = img_list[self.idleCount//3].convert_alpha()
         self.surf = pygame.transform.scale(self.surf, (100, 100))
         if self.left:
             self.surf = pygame.transform.flip(self.surf, True, False)
-        self.idleCount += 0.1
+        self.idleCount += 1
 
     def animacionWalk(self, img_list):
-        if self.walkCount >= len(img_list):
+        if self.walkCount >= 8*3:
             self.walkCount = 0
-        self.surf = img_list[int(self.walkCount)].convert_alpha()
+        self.surf = img_list[self.walkCount//3].convert_alpha()
         self.surf = pygame.transform.scale(self.surf, (100, 100))
         if self.left:
             self.surf = pygame.transform.flip(self.surf, True, False)
-        self.walkCount += 0.1
+        self.walkCount += 1
 
     def animacionJump(self, img_list):
-        if self.jumpCountAni > 19:
+        if self.jumpCountAni >= 30:
             self.jumpCountAni = 0
-        self.surf = img_list[self.jumpCountAni//2].convert_alpha()
+        self.surf = img_list[self.jumpCountAni//3].convert_alpha()
         self.surf = pygame.transform.scale(self.surf, (100, 100))
         if self.left:
             self.surf = pygame.transform.flip(self.surf, True, False) 
+        self.jumpCountAni += 1
 
     def  animavionMelee(self, img_list):
         if self.meleeCount > 21:

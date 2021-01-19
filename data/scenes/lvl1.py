@@ -23,6 +23,8 @@ class Level1Scene(SceneBase):
         self.coins = pygame.sprite.Group()
 
         self.bullet = 0
+        self.yellow = (255, 255, 0)
+        self.myfont = pygame.font.SysFont("Comic Sans MS", 50, True)
 
     def ProcessInput(self, events, pressed_keys):
         self.player.update(pressed_keys)
@@ -32,12 +34,13 @@ class Level1Scene(SceneBase):
                 self.coins.add(coin)
     
     def Update(self, dt):
-        pass
+        self.label = self.myfont.render(str(self.bullet), 1, self.yellow)
     
     def Render(self, screen, dt):
         screen.fill((0, 0, 0))
         screen.blit(self.background_image, [0, 0])
         screen.blit(self.player.surf, self.player.rect)
+        screen.blit(self.label, (1050, 650))
         collide = pygame.sprite.spritecollide(self.player, self.coins, True)
         for coin in collide:
             self.coin_sound.play()
